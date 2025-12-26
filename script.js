@@ -20,49 +20,41 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-// State Flag to prevent race condition during login animation
+// Add request for extra scopes (Calendar, Photos)
+googleProvider.addScope('https://www.googleapis.com/auth/calendar.events.readonly');
+googleProvider.addScope('https://www.googleapis.com/auth/photoslibrary.readonly');
+
+// State Flag to prevent race condition
 let isLoginProcess = false;
 
 // DOM Elements
-const loginForm = document.getElementById('login-form');
-const signupForm = document.getElementById('signup-form');
-const showSignupBtn = document.getElementById('show-signup');
-const showLoginBtn = document.getElementById('show-login');
-const errorMessage = document.getElementById('error-message');
 const googleLoginBtn = document.getElementById('google-login-btn');
 const loaderOverlay = document.getElementById('loader-overlay');
 const loaderText = document.getElementById('loader-text');
 const loginContainer = document.getElementById('login-container');
+const loginFormWrapper = document.getElementById('login-form'); // Adding wrapper ref if needed
+const errorMessage = document.getElementById('error-message');
+
+// Onboarding Elements
+const onboardingModal = document.getElementById('onboarding-modal');
+const nextStepBtns = document.querySelectorAll('.next-step-btn');
+const classOptions = document.querySelectorAll('.class-option');
+
+// DATA Storage
+let selectedClass = null;
 
 // Auth State Listener
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        // If we are currently processing a login (button clicked), DO NOT redirect yet.
-        // Wait for the animation to finish.
+        // Only redirect if NOT currently logging in (persistence check)
+        // AND validation check passed
         if (!isLoginProcess) {
+            // Check if we have class data saved, if not maybe force logout or show onboarding?
+            // For now, assume if logged in via persistence, go home.
+            // Ideally, we'd check DB. Using local storage for MVP.
             window.location.href = "home.html";
         }
     }
-});
-
-// Toggle Forms
-showSignupBtn.addEventListener('click', () => {
-    loginForm.classList.remove('active-form');
-    setTimeout(() => {
-        loginForm.style.display = 'none';
-        signupForm.style.display = 'flex';
-        // Small delay to allow display:flex to apply before opacity transition
-        setTimeout(() => signupForm.classList.add('active-form'), 10);
-    }, 400); // Wait for transition to finish
-});
-
-showLoginBtn.addEventListener('click', () => {
-    signupForm.classList.remove('active-form');
-    setTimeout(() => {
-        signupForm.style.display = 'none';
-        loginForm.style.display = 'flex';
-        setTimeout(() => loginForm.classList.add('active-form'), 10);
-    }, 400);
 });
 
 // Helper to show error
@@ -70,15 +62,13 @@ function showError(message) {
     const cleanMessage = message.replace('Firebase: ', '').replace(' (auth/', '').replace(').', '');
     errorMessage.textContent = cleanMessage;
     errorMessage.style.display = 'block';
-
-    // Auto hide after 5 seconds
     setTimeout(() => {
         errorMessage.style.display = 'none';
     }, 5000);
 }
 
-// Loader Logic
-function startLoaderAndRedirect() {
+// Loader & Redirect Logic
+function startLoaderAndOnboarding() {
     // Hide Form Container
     loginContainer.style.display = 'none';
 
@@ -91,18 +81,60 @@ function startLoaderAndRedirect() {
     }, 3000);
 
     setTimeout(() => {
-        loaderText.textContent = "Verifying Student Credentials...";
+        loaderText.textContent = "Accessing Information...";
     }, 6000);
 
     setTimeout(() => {
-        loaderText.textContent = "Welcome to RijanTudy!";
+        loaderText.textContent = "Almost Ready...";
     }, 9000);
 
-    // Redirect after 10 seconds
+    // After 10 seconds, instead of Redirect, Show Onboarding
     setTimeout(() => {
-        window.location.href = "home.html";
+        loaderOverlay.classList.remove('active');
+        showOnboarding();
     }, 10000);
 }
+
+function showOnboarding() {
+    onboardingModal.classList.add('active');
+}
+
+// Onboarding UI Logic
+nextStepBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const nextStepId = e.target.dataset.next;
+
+        if (nextStepId) {
+            // Check School Select (Stage 1 is static, so just proceed)
+            document.querySelector('.active-step').classList.remove('active-step');
+            document.getElementById(nextStepId).classList.add('active-step');
+        } else if (e.target.id === 'finish-btn') {
+            // Finish
+            if (!selectedClass) {
+                alert("Please select a class!");
+                return;
+            }
+            // Save Data
+            localStorage.setItem('rijantudy_class', selectedClass);
+            localStorage.setItem('rijantudy_school', 'Khadga Smriti Ma.Vi');
+
+            // Redirect
+            window.location.href = "home.html";
+        }
+    });
+});
+
+// Class Selection
+classOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        // clear others
+        classOptions.forEach(op => op.classList.remove('selected'));
+        // select this
+        option.classList.add('selected');
+        selectedClass = option.dataset.value;
+    });
+});
+
 
 // Handle Google Login
 if (googleLoginBtn) {
@@ -110,56 +142,20 @@ if (googleLoginBtn) {
         isLoginProcess = true; // Set flag
         signInWithPopup(auth, googleProvider)
             .then((result) => {
-                // This gives you a Google Access Token. You can use it to access the Google API.
-                const credential = GoogleAuthProvider.credentialFromResult(result);
-                const token = credential.accessToken;
                 const user = result.user;
                 console.log("Google User:", user);
-                startLoaderAndRedirect();
+                // Start the flow
+                startLoaderAndOnboarding();
             }).catch((error) => {
-                console.error("Google Login Error", error);
-                showError(error.message);
+                console.error("Google Login Error Full:", error);
+                if (error.code === 'auth/operation-not-allowed') {
+                    showError("Google Sign-In is not enabled.");
+                } else if (error.code === 'auth/unauthorized-domain') {
+                    showError("Domain unauthorized.");
+                } else {
+                    showError(error.message);
+                }
                 isLoginProcess = false; // Reset flag on error
             });
     });
 }
-
-// Handle Login
-loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    isLoginProcess = true; // Set flag
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-
-    signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            // Signed in
-            console.log("Logged in:", userCredential.user);
-            startLoaderAndRedirect();
-        })
-        .catch((error) => {
-            console.error("Login Error:", error);
-            showError(error.message);
-            isLoginProcess = false; // Reset flag on error
-        });
-});
-
-// Handle Signup
-signupForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    isLoginProcess = true; // Set flag
-    const email = document.getElementById('signup-email').value;
-    const password = document.getElementById('signup-password').value;
-    const name = document.getElementById('signup-name').value;
-
-    createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            // Signed up
-            console.log("Registered:", userCredential.user);
-            startLoaderAndRedirect();
-        })
-        .catch((error) => {
-            console.error("Signup Error:", error);
-            showError(error.message);
-        });
-});

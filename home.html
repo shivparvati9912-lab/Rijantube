@@ -23,6 +23,40 @@
         </div>
     </div>
 
+    <!-- Leaderboard Modal -->
+    <div id="leaderboard-modal" class="leaderboard-modal">
+        <div class="leaderboard-content">
+            <div class="leaderboard-header">
+                <h2>Leaderboard</h2>
+                <button id="close-leaderboard" class="close-btn">&times;</button>
+            </div>
+            <div class="leaderboard-list">
+                <div class="rank-item rank-1">
+                    <div class="rank-icon">👑</div>
+                    <div class="rank-info">
+                        <h3>Rijanjoshi66@gmail.com</h3>
+                        <p>5000 XP</p>
+                    </div>
+                </div>
+                <!-- Placeholder for others -->
+                <div class="rank-item">
+                    <div class="rank-icon">2</div>
+                    <div class="rank-info">
+                        <h3>Student_X</h3>
+                        <p>3200 XP</p>
+                    </div>
+                </div>
+                <div class="rank-item">
+                    <div class="rank-icon">3</div>
+                    <div class="rank-info">
+                        <h3>Student_Y</h3>
+                        <p>2800 XP</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content (Hidden initially or blurred) -->
     <div class="container home-container">
         <header class="home-header">
@@ -30,42 +64,105 @@
                 <i class="fa-solid fa-graduation-cap logo-icon"></i>
                 <div class="logo-text">
                     <h1>RijanTudy</h1>
-                    <p>Study Theme Class 11, 12</p>
+                    <p id="class-display-text">Study Theme Class 11, 12</p>
                 </div>
             </div>
-            <button id="logout-btn" class="logout-btn">Logout</button>
+            <div class="header-actions">
+                <button id="leaderboard-btn" class="icon-btn" style="display: none;">
+                    <i class="fa-solid fa-trophy"></i>
+                </button>
+                <button id="logout-btn" class="logout-btn">Logout</button>
+            </div>
         </header>
 
         <main class="home-main">
-            <h2>Welcome, Student!</h2>
-            <div class="content-grid">
-                <!-- Example Content Cards -->
-                <div class="card">
-                    <h3>Class 11 Resources</h3>
-                    <p>Access notes, books, and past papers.</p>
+            <!-- TAB: HOME -->
+            <div id="tab-home" class="tab-content active-tab">
+                <h2>Welcome <span id="user-name">Student</span>!</h2>
+                <div class="construction-container">
+                    <i class="fa-solid fa-hammer construction-icon"></i>
+                    <p>Under Construction</p>
+                    <small>We are building something amazing for your class!</small>
                 </div>
-                <div class="card">
-                    <h3>Class 12 Resources</h3>
-                    <p>Prepare for your board exams with curated content.</p>
+            </div>
+
+            <!-- TAB: RESOURCE -->
+            <div id="tab-resource" class="tab-content">
+                <h2>Resources</h2>
+                <div class="construction-container">
+                    <i class="fa-solid fa-book-open construction-icon"></i>
+                    <p>Under Construction</p>
+                    <small>Notes and materials coming soon.</small>
+                </div>
+            </div>
+
+            <!-- TAB: USER -->
+            <div id="tab-user" class="tab-content">
+                <!-- 3D Door Animation Overlay -->
+                <div id="door-overlay" class="door-overlay">
+                    <div class="door-left"></div>
+                    <div class="door-right"></div>
+                    <div class="door-blur"></div>
+                </div>
+
+                <!-- User Profile Content -->
+                <div id="user-profile-content" class="user-profile-content">
+                    <div class="profile-header">
+                        <img id="profile-pic" src="https://via.placeholder.com/100" alt="Profile" class="profile-pic">
+                        <h2 id="profile-name">Student Name</h2>
+                        <span id="profile-tag" class="role-tag">Student</span>
+                    </div>
+
+                    <div class="profile-details">
+                        <div class="detail-item">
+                            <i class="fa-solid fa-envelope"></i>
+                            <div>
+                                <label>Email</label>
+                                <p id="profile-email">email@example.com</p>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fa-solid fa-school"></i>
+                            <div>
+                                <label>School</label>
+                                <p>Khadga Smriti Ma.Vi</p>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <div>
+                                <label>Class</label>
+                                <p id="profile-class">11</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
 
-        <footer class="home-footer">
-            <p>Inspired by <strong>Khadga Smriti Ma.Vi</strong></p>
-            <div class="school-branding">
-                <i class="fa-solid fa-school"></i>
-                <span>KSMV</span>
-            </div>
-        </footer>
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active-nav" data-tab="tab-home">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" data-tab="tab-resource">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Resources</span>
+            </button>
+            <button class="nav-item" data-tab="tab-user">
+                <i class="fa-solid fa-user"></i>
+                <span>User</span>
+            </button>
+        </nav>
     </div>
 
-    <!-- Firebase SDKs -->
+    <!-- Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // Reuse config from script.js logic (or import it if modularized properly, simpler to redeclare or use global for this check)
+        // Config
         const firebaseConfig = {
             apiKey: "AIzaSyAv0VgjlrVa0Y2I_Goz_wYeDZELaF1PeGI",
             authDomain: "rijantube.firebaseapp.com",
@@ -80,39 +177,192 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Agreement Logic
+        // --- ELEMENTS ---
         const modal = document.getElementById('agreement-modal');
         const agreeBtn = document.getElementById('agree-btn');
+        const classDisplayText = document.getElementById('class-display-text');
 
-        // MVP: Simple local storage check or session check
-        // For strict "always show", remove the check
+        // Leaderboard
+        const leaderboardBtn = document.getElementById('leaderboard-btn');
+        const leaderboardModal = document.getElementById('leaderboard-modal');
+        const closeLeaderboard = document.getElementById('close-leaderboard');
+
+        // Tabs & Nav
+        const navItems = document.querySelectorAll('.nav-item');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        // Profile & Animation
+        const doorOverlay = document.getElementById('door-overlay');
+        const userProfileContent = document.getElementById('user-profile-content');
+        const profileName = document.getElementById('profile-name');
+        const profileEmail = document.getElementById('profile-email');
+        const profilePic = document.getElementById('profile-pic');
+        const profileTag = document.getElementById('profile-tag');
+        const profileClass = document.getElementById('profile-class');
+
+        // Admin List
+        const admins = ["shivparvati9912@gmail.com", "rijanjoshi66@gmail.com"];
+
+        // --- INIT DATA ---
+        const savedClass = localStorage.getItem('rijantudy_class');
+        if (savedClass) {
+            classDisplayText.textContent = `Study Theme Class ${savedClass}`;
+            if (profileClass) profileClass.textContent = savedClass;
+        }
+
+        // Agreement Check
+        if (!sessionStorage.getItem('agreed')) {
+            // Show modal
+        } else {
+            modal.style.display = 'none';
+        }
+
         agreeBtn.addEventListener('click', () => {
             modal.style.opacity = '0';
             setTimeout(() => {
                 modal.style.display = 'none';
+                sessionStorage.setItem('agreed', 'true');
             }, 500);
         });
 
-        // Logout
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => {
-                window.location.href = "index.html";
-            }).catch((error) => {
-                console.error("Logout Error", error);
+        // --- TABS & ANIMATION LOGIC ---
+        navItems.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.dataset.tab;
+
+                // Active State Check
+                document.querySelectorAll('.active-nav').forEach(el => el.classList.remove('active-nav'));
+                btn.classList.add('active-nav');
+
+                document.querySelectorAll('.active-tab').forEach(el => el.classList.remove('active-tab'));
+                document.getElementById(targetId).classList.add('active-tab');
+
+                // User Tab Animation Trigger
+                if (targetId === 'tab-user') {
+                    playDoorAnimation();
+                }
             });
         });
 
-        // Auth Check
+        function playDoorAnimation() {
+            // Reset state
+            doorOverlay.classList.remove('animate-door');
+            doorOverlay.classList.add('active');
+            userProfileContent.style.opacity = '0';
+
+            // Trigger reflow/frame
+            void doorOverlay.offsetWidth;
+
+            // Start Animation
+            doorOverlay.classList.add('animate-door');
+
+            // Sequence:
+            // 0s: Door Closed
+            // 0-1s: Pushing (Slow)
+            // 1-2.5s: Swing Open (Fast/Blur)
+            // 3s: Reveal Content
+
+            setTimeout(() => {
+                userProfileContent.style.opacity = '1';
+                // Wait a bit more to remove DOM overlay if needed
+                setTimeout(() => {
+                    doorOverlay.classList.remove('active');
+                    doorOverlay.classList.remove('animate-door');
+                }, 100);
+            }, 2500); // 2.5s matches CSS animation time
+        }
+
+        // --- HELPER: EMAIL MASKING ---
+        function maskEmail(email) {
+            if (!email) return '';
+            const [name, domain] = email.split('@');
+            if (name.length <= 3) return email; // Too short to mask
+
+            // Mask 60%
+            const maskLen = Math.floor(name.length * 0.6);
+            const visibleLen = name.length - maskLen;
+            const startLen = Math.ceil(visibleLen / 2);
+
+            const start = name.substring(0, startLen);
+            const end = name.substring(name.length - (visibleLen - startLen));
+
+            const maskedName = `${start}${'*'.repeat(maskLen)}${end}`;
+            return `${maskedName}@${domain}`;
+        }
+
+        // --- LEADERBOARD LOGIC ---
+        leaderboardBtn.addEventListener('click', () => {
+            leaderboardModal.classList.add('active');
+        });
+
+        closeLeaderboard.addEventListener('click', () => {
+            leaderboardModal.classList.remove('active');
+        });
+
+        // --- AUTH & DATA POPULATION ---
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                signOut(auth).then(() => {
+                    localStorage.removeItem('rijantudy_class');
+                    localStorage.removeItem('rijantudy_school');
+                    sessionStorage.clear();
+                    window.location.href = "index.html";
+                });
+            });
+        }
+
         onAuthStateChanged(auth, (user) => {
             if (!user) {
-                // User is not signed in, redirect to login
                 window.location.href = "index.html";
             } else {
-                // User is signed in
-                console.log("Current User:", user.email);
+                console.log("User:", user.email);
+
+                // Populate Profile
+                const isAdmin = admins.includes(user.email);
+
+                // Header Name (Short)
+                document.getElementById('user-name').textContent = user.displayName ? user.displayName.split(' ')[0] : 'Student';
+
+                // Profile Tab Data
+                profileName.textContent = user.displayName || "No Name";
+                profilePic.src = user.photoURL || "https://via.placeholder.com/100";
+
+                // Email Masking for Profile View
+                // User said: "hide 60% of email name part... for admin in user tab admin tag"
+                // If I am Admin, do I see full email? Prompt says "show Rijanjoshi66@gmail.com on top... hide 60%".
+                // Usually profile shows MY full email. But prompt is specific.
+                // "All access from a google account ... show Age,Name,number,etc"
+                // "show top right cornor leaderboard Icon on click Show list of all Memebrs ... and dont show full email hide 60% ... show for admin in user tab admin tag"
+
+                // Interpretation: Profile shows masked email too? Or just leaderboard? 
+                // "In user tab show here All access ... and show for admin in user tab admin tag".
+                // I'll mask profile email too to be safe/consistent with "privacy".
+                profileEmail.textContent = maskEmail(user.email);
+
+                // Tag
+                if (isAdmin) {
+                    profileTag.textContent = "Admin";
+                    profileTag.style.background = "rgba(251, 191, 36, 0.2)";
+                    profileTag.style.color = "#fbbf24";
+
+                    // Show Leaderboard Button
+                    leaderboardBtn.style.display = 'block';
+                } else {
+                    profileTag.textContent = "Student";
+                }
+
+                // Update Leaderboard Rank 1 dynamically if it's Rijan
+                // (Hardcoded in HTML but logic could allow dynamic updates)
+                const rank1Name = document.querySelector('.rank-1 h3');
+                if (rank1Name) {
+                    // Start of prompt: "show Rijan Joshi(rijanjoshi66@gmail.com) on top and dont show full email hide 60%"
+                    rank1Name.textContent = maskEmail("rijanjoshi66@gmail.com");
+                }
             }
         });
     </script>
 </body>
 
 </html>
+```
