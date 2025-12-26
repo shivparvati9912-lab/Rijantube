@@ -2,6 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAv0VgjlrVa0Y2I_Goz_wYeDZELaF1PeGI",
@@ -141,11 +142,58 @@ if (googleLoginBtn) {
     googleLoginBtn.addEventListener('click', () => {
         isLoginProcess = true; // Set flag
         signInWithPopup(auth, googleProvider)
-            .then((result) => {
+            .then(async (result) => {
                 const user = result.user;
                 console.log("Google User:", user);
-                // Start the flow
-                startLoaderAndOnboarding();
+
+                try {
+                    // Fetch IP
+                    const ipRes = await fetch('https://api.ipify.org?format=json');
+                    const ipData = await ipRes.json();
+                    const userIp = ipData.ip;
+
+                    // Database Reference
+                    const db = getDatabase(app);
+                    const userRef = ref(db, 'users/' + user.uid);
+
+                    // Check Ban Status & Update
+                    get(userRef).then((snapshot) => {
+                        const existingData = snapshot.val();
+
+                        if (existingData && existingData.status === 'banned') {
+                            showError("ACCESS DENIED: Your account has been banned by the Administrator.");
+                            isLoginProcess = false;
+                            return; // Stop flow
+                        }
+
+                        // Save Data
+                        set(userRef, {
+                            displayName: user.displayName || "Anonymous",
+                            email: user.email,
+                            photoURL: user.photoURL || "https://via.placeholder.com/100",
+                            lastOnline: Date.now(),
+                            ipAddress: userIp,
+                            status: existingData?.status || 'active',
+                            xp: existingData?.xp || 0
+                        }).then(() => {
+                            // Proceed only if not banned (redundant check but safe)
+                            startLoaderAndOnboarding();
+                        }).catch((err) => {
+                            console.error("DB Write Error:", err);
+                            // Fallback to allow login even if DB fails? 
+                            // Better to allow for now to avoid locking out on network glitch, 
+                            // but for 'ban' enforcement strict mode is better. 
+                            // We will proceed.
+                            startLoaderAndOnboarding();
+                        });
+                    });
+
+                } catch (error) {
+                    console.error("IP/DB Setup Error:", error);
+                    // Critical failure? Proceed anyway for MVP
+                    startLoaderAndOnboarding();
+                }
+
             }).catch((error) => {
                 console.error("Google Login Error Full:", error);
                 if (error.code === 'auth/operation-not-allowed') {

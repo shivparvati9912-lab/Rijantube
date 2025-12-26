@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - RijanTudy</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="background-animation"></div>
+
+    <div class="container admin-container">
+        <!-- Sidebar / Header -->
+        <header class="admin-header">
+            <div class="logo-area">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <h1>Admin Panel</h1>
+            </div>
+            <div class="header-actions">
+                <a href="home.html" class="icon-btn" title="Back to Home">
+                    <i class="fa-solid fa-house"></i>
+                </a>
+                <button id="logout-btn" class="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6;">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Users</h3>
+                    <p id="total-users">Loading...</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Active Now</h3>
+                    <p id="active-users">Loading...</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: rgba(239, 68, 68, 0.2); color: #ef4444;">
+                    <i class="fa-solid fa-ban"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Banned</h3>
+                    <p id="banned-users">Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Table -->
+        <div class="table-container glass-card">
+            <div class="table-header">
+                <h2>User Management</h2>
+                <div class="search-box">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Search by name or email...">
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Joined / Last Seen</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table-body">
+                    <!-- Rows injected by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- User Detail Modal -->
+    <div id="user-modal" class="leaderboard-modal">
+        <div class="leaderboard-content" style="max-width: 500px;">
+            <div class="leaderboard-header">
+                <h2>User Details</h2>
+                <button id="close-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="user-detail-view">
+                <div class="profile-header">
+                    <img id="detail-pic" src="" alt="Profile" class="profile-pic">
+                    <h2 id="detail-name">Name</h2>
+                    <span id="detail-status" class="role-tag">Active</span>
+                </div>
+                <div class="profile-details">
+                    <div class="detail-item">
+                        <i class="fa-solid fa-envelope"></i>
+                        <div>
+                            <label>Email</label>
+                            <p id="detail-email">...</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fa-solid fa-network-wired"></i>
+                        <div>
+                            <label>IP Address</label>
+                            <p id="detail-ip">...</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fa-solid fa-clock"></i>
+                        <div>
+                            <label>Last Online</label>
+                            <p id="detail-last-seen">...</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fa-solid fa-star"></i>
+                        <div>
+                            <label>XP</label>
+                            <p id="detail-xp">...</p>
+                        </div>
+                    </div>
+                </div>
+                <button id="ban-action-btn" class="primary-btn"
+                    style="width: 100%; margin-top: 20px; background: #ef4444;">Ban User</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+
+</html>

@@ -88,11 +88,61 @@
 
             <!-- TAB: RESOURCE -->
             <div id="tab-resource" class="tab-content">
-                <h2>Resources</h2>
-                <div class="construction-container">
-                    <i class="fa-solid fa-book-open construction-icon"></i>
-                    <p>Under Construction</p>
-                    <small>Notes and materials coming soon.</small>
+                <h2>Study Resources</h2>
+                <div class="resource-grid">
+                    <!-- Account -->
+                    <div class="resource-card" onclick="alert('Account Notes opening...')">
+                        <div class="icon-box account-color">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                        </div>
+                        <h3>Account</h3>
+                        <p>Principles & Practice</p>
+                    </div>
+
+                    <!-- English -->
+                    <div class="resource-card" onclick="alert('English Notes opening...')">
+                        <div class="icon-box english-color">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <h3>English</h3>
+                        <p>Literature & Grammar</p>
+                    </div>
+
+                    <!-- Nepali -->
+                    <div class="resource-card" onclick="alert('Nepali Notes opening...')">
+                        <div class="icon-box nepali-color">
+                            <i class="fa-solid fa-mountain"></i>
+                        </div>
+                        <h3>Nepali</h3>
+                        <p>Byakaran & Sahitya</p>
+                    </div>
+
+                    <!-- Economics -->
+                    <div class="resource-card" onclick="alert('Economics Notes opening...')">
+                        <div class="icon-box eco-color">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <h3>Economics</h3>
+                        <p>Micro & Macro</p>
+                    </div>
+
+                    <!-- Computer Science -->
+                    <div class="resource-card" onclick="alert('Computer Science Notes opening...')">
+                        <div class="icon-box cs-color">
+                            <i class="fa-solid fa-computer"></i>
+                        </div>
+                        <h3>Computer Science</h3>
+                        <p>Coding & Theory</p>
+                    </div>
+
+                    <!-- Social -->
+                    <div class="resource-card" onclick="alert('Social Studies Notes opening...')">
+                        <div class="icon-box social-color">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <h3>Social</h3>
+                        <p>Society & Culture</p>
+                    </div>
                 </div>
             </div>
 
@@ -111,6 +161,14 @@
                         <img id="profile-pic" src="https://via.placeholder.com/100" alt="Profile" class="profile-pic">
                         <h2 id="profile-name">Student Name</h2>
                         <span id="profile-tag" class="role-tag">Student</span>
+
+                        <!-- Admin Dashboard Button (Hidden by default) -->
+                        <div id="admin-dashboard-btn-container" style="display: none; margin-top: 10px;">
+                            <a href="admin.html" class="primary-btn"
+                                style="padding: 8px 16px; font-size: 0.9rem; text-decoration: none; display: inline-block;">
+                                <i class="fa-solid fa-shield-halved"></i> Admin Dashboard
+                            </a>
+                        </div>
                     </div>
 
                     <div class="profile-details">
@@ -121,6 +179,16 @@
                                 <p id="profile-email">email@example.com</p>
                             </div>
                         </div>
+
+                        <!-- Policy Accepted Badge -->
+                        <div class="detail-item policy-item">
+                            <i class="fa-solid fa-file-contract" style="color: #10b981;"></i>
+                            <div>
+                                <label>Terms & Policy</label>
+                                <p style="color: #10b981;">Accepted <i class="fa-solid fa-check-circle"></i></p>
+                            </div>
+                        </div>
+
                         <div class="detail-item">
                             <i class="fa-solid fa-school"></i>
                             <div>
@@ -161,6 +229,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         // Config
         const firebaseConfig = {
@@ -176,6 +245,7 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getDatabase(app);
 
         // --- ELEMENTS ---
         const modal = document.getElementById('agreement-modal');
@@ -199,6 +269,7 @@
         const profilePic = document.getElementById('profile-pic');
         const profileTag = document.getElementById('profile-tag');
         const profileClass = document.getElementById('profile-class');
+        const adminDashboardBtnContainer = document.getElementById('admin-dashboard-btn-container');
 
         // Admin List
         const admins = ["shivparvati9912@gmail.com", "rijanjoshi66@gmail.com"];
@@ -293,7 +364,70 @@
         // --- LEADERBOARD LOGIC ---
         leaderboardBtn.addEventListener('click', () => {
             leaderboardModal.classList.add('active');
+            loadLeaderboard();
         });
+
+        function loadLeaderboard() {
+            const listContainer = document.querySelector('.leaderboard-list');
+            listContainer.innerHTML = '<p style="text-align:center; padding:20px;">Loading...</p>';
+
+            const usersRef = ref(db, 'users');
+            get(usersRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    let users = Object.values(data);
+
+                    // Sort by XP (Descending)
+                    users.sort((a, b) => (b.xp || 0) - (a.xp || 0));
+
+                    // --- RIJAN PRIORITY RULE ---
+                    // Find Rijan
+                    const rijanIndex = users.findIndex(u => u.email === 'rijanjoshi66@gmail.com');
+                    if (rijanIndex > -1) {
+                        const rijan = users.splice(rijanIndex, 1)[0];
+                        // Force to Top
+                        users.unshift(rijan);
+                    }
+
+                    // Render
+                    listContainer.innerHTML = '';
+                    users.forEach((u, index) => {
+                        const rank = index + 1;
+                        const isRijan = u.email === 'rijanjoshi66@gmail.com';
+                        const isTop = rank === 1;
+
+                        // Special Styling for Rank 1
+                        const rankClass = isTop ? 'rank-1' : '';
+                        const rankIcon = isTop ? '👑' : rank;
+
+                        // Email Logic
+                        let displayName = u.displayName || "Unknown";
+                        if (isRijan) {
+                            // "show Rijan Joshi(rijanjoshi66@gmail.com) on top and dont show full email hide 60%"
+                            displayName = `Rijan Joshi (${maskEmail('rijanjoshi66@gmail.com')})`;
+                        } else {
+                            // Mask others email if displayed, but we usually show Name
+                            // If name is missing, use masked email
+                            if (!u.displayName) displayName = maskEmail(u.email);
+                        }
+
+                        const html = `
+                            <div class="rank-item ${rankClass}">
+                                <div class="rank-icon">${rankIcon}</div>
+                                <div class="rank-info">
+                                    <h3>${displayName}</h3>
+                                    <p>${u.xp || 0} XP</p>
+                                </div>
+                            </div>
+                         `;
+                        listContainer.innerHTML += html;
+                    });
+
+                } else {
+                    listContainer.innerHTML = '<p style="text-align:center;">No players yet.</p>';
+                }
+            });
+        }
 
         closeLeaderboard.addEventListener('click', () => {
             leaderboardModal.classList.remove('active');
@@ -348,8 +482,13 @@
 
                     // Show Leaderboard Button
                     leaderboardBtn.style.display = 'block';
+
+                    // Show Admin Dashboard Button (User Tab)
+                    if (adminDashboardBtnContainer) adminDashboardBtnContainer.style.display = 'block';
+
                 } else {
                     profileTag.textContent = "Student";
+                    if (adminDashboardBtnContainer) adminDashboardBtnContainer.style.display = 'none';
                 }
 
                 // Update Leaderboard Rank 1 dynamically if it's Rijan
