@@ -40,8 +40,9 @@
             <!-- Error Message Display -->
             <div id="error-message" class="error-message"></div>
 
-            <!-- Login Form (Google Only now) -->
-            <form id="login-form" class="active-form" style="display: flex;">
+            <!-- Login Form (Google Only) -->
+            <div id="login-container-inner" class="active-form"
+                style="display: flex; flex-direction: column; width: 100%;">
                 <h2>Welcome Back</h2>
                 <p style="color: var(--text-muted); margin-bottom: 2rem;">Sign in to continue your learning journey.</p>
 
@@ -51,7 +52,8 @@
                         <span>Sign in with Google</span>
                     </button>
                 </div>
-                <label for="signup-name">Full Name</label>
+            </div>
+            <label for="signup-name">Full Name</label>
         </div>
         <div class="input-group">
             <input type="email" id="signup-email" required placeholder=" ">

@@ -20,9 +20,8 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-// Add request for extra scopes (Calendar, Photos)
-googleProvider.addScope('https://www.googleapis.com/auth/calendar.events.readonly');
-googleProvider.addScope('https://www.googleapis.com/auth/photoslibrary.readonly');
+// Scopes: Default profile/email are included. 
+// REMOVED sensitive scopes (Calendar/Photos) to avoid "Unverified App" warning.
 
 // State Flag to prevent race condition
 let isLoginProcess = false;
@@ -32,7 +31,6 @@ const googleLoginBtn = document.getElementById('google-login-btn');
 const loaderOverlay = document.getElementById('loader-overlay');
 const loaderText = document.getElementById('loader-text');
 const loginContainer = document.getElementById('login-container');
-const loginFormWrapper = document.getElementById('login-form'); // Adding wrapper ref if needed
 const errorMessage = document.getElementById('error-message');
 
 // Onboarding Elements
@@ -62,6 +60,8 @@ function showError(message) {
     const cleanMessage = message.replace('Firebase: ', '').replace(' (auth/', '').replace(').', '');
     errorMessage.textContent = cleanMessage;
     errorMessage.style.display = 'block';
+
+    // Auto hide after 5 seconds
     setTimeout(() => {
         errorMessage.style.display = 'none';
     }, 5000);
