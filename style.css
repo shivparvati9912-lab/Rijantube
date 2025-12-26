@@ -287,6 +287,43 @@ h2 {
     margin-top: 20px;
 }
 
+/* Onboarding Modal */
+.onboarding-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-color);
+    z-index: 950;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.onboarding-modal.active {
+    display: flex;
+    animation: fadeIn 0.5s forwards;
+}
+
+.onboarding-content {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    text-align: center;
+}
+
+.step {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    animation: slideIn 0.5s ease;
+}
+
+.step.active-step {
+    display: flex;
+}
+
 /* Leaderboard Styles */
 .leaderboard-modal {
     position: fixed;

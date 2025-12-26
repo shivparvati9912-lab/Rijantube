@@ -53,26 +53,49 @@
                     </button>
                 </div>
             </div>
-            <label for="signup-name">Full Name</label>
         </div>
-        <div class="input-group">
-            <input type="email" id="signup-email" required placeholder=" ">
-            <label for="signup-email">Email Address</label>
-        </div>
-        <div class="input-group">
-            <input type="password" id="signup-password" required placeholder=" ">
-            <label for="signup-password">Password</label>
-        </div>
-
-        <button type="submit" class="primary-btn">Sign Up</button>
-
-        <div class="divider">
-            <span>or</span>
-        </div>
-
-        <p class="switch-text">Already have an account? <span id="show-login">Sign In</span></p>
-        </form>
     </div>
+
+    <!-- Onboarding Modal -->
+    <div id="onboarding-modal" class="onboarding-modal">
+        <div class="onboarding-content">
+            <!-- Step 1: School -->
+            <div class="step active-step" id="step-school">
+                <div class="step-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18L12 21L19 17.18V13.18L12 17L5 13.18Z" />
+                    </svg>
+                </div>
+                <h2>Select Your School</h2>
+                <div class="option-card selected">
+                    <h3>Khadga Smriti Ma.Vi</h3>
+                    <p>Tikapur, Kailali</p>
+                    <div class="check-mark">✓</div>
+                </div>
+                <button class="primary-btn next-step-btn" data-next="step-class">Next Step</button>
+            </div>
+
+            <!-- Step 2: Class -->
+            <div class="step" id="step-class">
+                <div class="step-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                        <path
+                            d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                    </svg>
+                </div>
+                <h2>Select Your Class</h2>
+                <div class="class-options">
+                    <div class="option-card class-option" data-value="11">
+                        <h3>Class 11</h3>
+                    </div>
+                    <div class="option-card class-option" data-value="12">
+                        <h3>Class 12</h3>
+                    </div>
+                </div>
+                <button class="primary-btn next-step-btn" id="finish-btn">Finish</button>
+            </div>
+        </div>
     </div>
 
     <!-- Firebase SDKs -->
