@@ -1,0 +1,53 @@
+<!-- Replace the video modal section in account.html (around line 93-102) with this: -->
+
+<!-- Video Modal -->
+<div id="video-modal" class="video-modal">
+    <div class="video-modal-content">
+        <button class="video-close-btn" onclick="closeVideo()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <!-- Custom Video Controls Overlay -->
+        <div id="custom-controls" class="custom-video-controls">
+            <div class="video-top-bar">
+                <div class="rijantube-branding">
+                    <i class="fa-solid fa-play-circle"></i>
+                    <span>Rijantube</span>
+                </div>
+            </div>
+
+            <div class="video-center-controls">
+                <button class="skip-btn skip-backward" onclick="skipVideo(-10)">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span>10</span>
+                </button>
+                <button class="play-pause-btn" id="play-pause-btn" onclick="togglePlayPause()">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+                <button class="skip-btn skip-forward" onclick="skipVideo(10)">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>10</span>
+                </button>
+            </div>
+
+            <div class="video-bottom-bar">
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="video-time">
+                    <span id="current-time">0:00</span>
+                    <span>/</span>
+                    <span id="duration-time">0:00</span>
+                </div>
+            </div>
+
+            <!-- Skip Animation Overlay -->
+            <div class="skip-animation" id="skip-animation">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span id="skip-text">+10s</span>
+            </div>
+        </div>
+
+        <div id="video-player"></div>
+    </div>
+</div>

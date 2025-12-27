@@ -57,8 +57,7 @@
                     </button>
                     <div class="panel">
                         <div class="panel-content">
-                            <div class="file-item"
-                                onclick="openVideo('https://www.youtube.com/embed/4kgfnLpRUn8?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0')">
+                            <div class="file-item" onclick="openVideo('https://www.youtube.com/embed/4kgfnLpRUn8')">
                                 <i class="fa-brands fa-youtube" style="color: #ef4444;"></i>
                                 <span>Journal Entry</span>
                             </div>
@@ -96,9 +95,49 @@
             <button class="video-close-btn" onclick="closeVideo()">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <div class="video-title">Journal Entry</div>
-            <iframe id="video-player" width="100%" height="100%" frameborder="0" allow="autoplay; encrypted-media"
-                allowfullscreen></iframe>
+
+            <!-- Custom Video Controls Overlay -->
+            <div id="custom-controls" class="custom-video-controls">
+                <div class="video-top-bar">
+                    <div class="rijantube-branding">
+                        <i class="fa-solid fa-play-circle"></i>
+                        <span>Rijantube</span>
+                    </div>
+                </div>
+
+                <div class="video-center-controls">
+                    <button class="skip-btn skip-backward" onclick="skipVideo(-10)">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>10</span>
+                    </button>
+                    <button class="play-pause-btn" id="play-pause-btn" onclick="togglePlayPause()">
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                    <button class="skip-btn skip-forward" onclick="skipVideo(10)">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>10</span>
+                    </button>
+                </div>
+
+                <div class="video-bottom-bar">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                    <div class="video-time">
+                        <span id="current-time">0:00</span>
+                        <span>/</span>
+                        <span id="duration-time">0:00</span>
+                    </div>
+                </div>
+
+                <!-- Skip Animation Overlay -->
+                <div class="skip-animation" id="skip-animation">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span id="skip-text">+10s</span>
+                </div>
+            </div>
+
+            <div id="video-player"></div>
         </div>
     </div>
 
@@ -124,18 +163,137 @@
             }
         });
 
+        // YouTube Player API
+        let player;
+        let controlsTimeout;
+
+        // Load YouTube API
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // API Ready callback
+        window.onYouTubeIframeAPIReady = function () {
+            console.log('YouTube API Ready');
+        };
+
         // Video Modal Functions
         function openVideo(videoUrl) {
             const modal = document.getElementById('video-modal');
-            const player = document.getElementById('video-player');
-            player.src = videoUrl;
+            const customControls = document.getElementById('custom-controls');
+
+            // Extract video ID from URL
+            const videoId = videoUrl.match(/embed\/([^?]+)/)[1];
+
             modal.classList.add('active');
+
+            // Initialize YouTube player
+            player = new YT.Player('video-player', {
+                height: '100%',
+                width: '100%',
+                videoId: videoId,
+                playerVars: {
+                    'autoplay': 1,
+                    'controls': 0,  // Hide YouTube controls
+                    'modestbranding': 1,
+                    'rel': 0,
+                    'showinfo': 0,
+                    'fs': 0,  // Hide fullscreen button
+                    'iv_load_policy': 3,  // Hide annotations
+                    'disablekb': 1  // Disable keyboard
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+
+            // Show/hide controls on click
+            customControls.addEventListener('click', showControls);
+        }
+
+        function onPlayerReady(event) {
+            updateVideoTime();
+            setInterval(updateVideoTime, 1000);
+        }
+
+        function onPlayerStateChange(event) {
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            if (event.data === YT.PlayerState.PLAYING) {
+                playPauseBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+            } else {
+                playPauseBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+            }
+        }
+
+        function togglePlayPause() {
+            if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+            } else {
+                player.playVideo();
+            }
+        }
+
+        function skipVideo(seconds) {
+            const currentTime = player.getCurrentTime();
+            player.seekTo(currentTime + seconds, true);
+            showSkipAnimation(seconds);
+        }
+
+        function showSkipAnimation(seconds) {
+            const skipAnim = document.getElementById('skip-animation');
+            const skipText = document.getElementById('skip-text');
+            const icon = skipAnim.querySelector('i');
+
+            if (seconds > 0) {
+                icon.className = 'fa-solid fa-rotate-right';
+                skipText.textContent = `+${seconds}s`;
+            } else {
+                icon.className = 'fa-solid fa-rotate-left';
+                skipText.textContent = `${seconds}s`;
+            }
+
+            skipAnim.classList.add('show');
+            setTimeout(() => {
+                skipAnim.classList.remove('show');
+            }, 500);
+        }
+
+        function updateVideoTime() {
+            if (!player || !player.getCurrentTime) return;
+
+            const current = player.getCurrentTime();
+            const duration = player.getDuration();
+            const progress = (current / duration) * 100;
+
+            document.getElementById('current-time').textContent = formatTime(current);
+            document.getElementById('duration-time').textContent = formatTime(duration);
+            document.getElementById('progress-bar').style.width = progress + '%';
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function showControls() {
+            const controls = document.getElementById('custom-controls');
+            controls.classList.add('visible');
+
+            clearTimeout(controlsTimeout);
+            controlsTimeout = setTimeout(() => {
+                controls.classList.remove('visible');
+            }, 3000);
         }
 
         function closeVideo() {
             const modal = document.getElementById('video-modal');
-            const player = document.getElementById('video-player');
-            player.src = '';
+            if (player) {
+                player.destroy();
+                player = null;
+            }
             modal.classList.remove('active');
         }
 
