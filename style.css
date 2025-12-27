@@ -540,27 +540,33 @@ h2 {
 .home-main {
     flex: 1;
     overflow-y: auto;
-    overflow-x: hidden;
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     position: relative;
-    /* Hide scrollbar */
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-}
-
-.home-main::-webkit-scrollbar {
-    display: none;
 }
 
 /* Tabs */
 .tab-content {
     display: none;
-    animation: fadeIn 0.3s ease;
-    height: 100%;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 20px;
+    padding-bottom: 100px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.tab-content.active-tab {
+.tab-content.active {
     display: block;
+    opacity: 1;
+}
+
+/* Ensure content is visible */
+.tab-content>* {
+    visibility: visible;
+    opacity: 1;
 }
 
 /* Construction Placeholder */

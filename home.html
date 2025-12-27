@@ -80,26 +80,16 @@
 
         <main class="home-main">
             <!-- TAB: HOME -->
-            <div id="tab-home" class="tab-content active-tab">
-                <h2>Welcome <span id="user-name">Student</span>!</h2>
-                <div class="construction-container">
-                    <i class="fa-solid fa-hammer construction-icon"></i>
-                    <p>Under Construction</p>
-                    <small>We are building something amazing for your class!</small>
-                </div>
-            </div>
-
-            <!-- TAB: RESOURCE -->
-            <div id="tab-resource" class="tab-content">
-                <h2>Study Resources</h2>
-                <div class="resource-grid">
-                    <!-- Account -->
-                    <div class="resource-card" onclick="navigateTo('account.html', 'Account')">
-                        <div class="icon-box account-color">
-                            <i class="fa-solid fa-file-invoice-dollar"></i>
+            <!-- TAB: HOME / RESOURCES -->
+            <div id="tab-home" class="tab-content active">
+                <div class="resources-grid">
+                    <!-- Account Widget -->
+                    <div class="subject-widget" onclick="navigateTo('account.html', 'Account')">
+                        <div class="widget-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                            <i class="fa-solid fa-calculator"></i>
                         </div>
                         <h3>Account</h3>
-                        <p>Principles & Practice</p>
+                        <p>Financial Accounting Basics</p>
                     </div>
 
                     <!-- English -->
@@ -353,16 +343,39 @@
         });
 
         // --- TABS & ANIMATION LOGIC ---
+        // Switch Tab Function
+        function switchTab(tabId, clickedBtn) {
+            // Hide all tabs
+            const allTabs = document.querySelectorAll('.tab-content');
+            allTabs.forEach(tab => {
+                tab.classList.remove('active');
+                tab.style.display = 'none';
+            });
+
+            // Show selected tab
+            const selectedTab = document.getElementById(tabId);
+            if (selectedTab) {
+                selectedTab.style.display = 'block';
+                // Force reflow to ensure opacity transition works
+                setTimeout(() => {
+                    selectedTab.classList.add('active');
+                }, 10);
+            }
+
+            // Update nav item active state
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active-nav');
+            });
+            if (clickedBtn) {
+                clickedBtn.classList.add('active-nav');
+            }
+        }
+
         navItems.forEach(btn => {
             btn.addEventListener('click', () => {
                 const targetId = btn.dataset.tab;
 
-                // Active State Check
-                document.querySelectorAll('.active-nav').forEach(el => el.classList.remove('active-nav'));
-                btn.classList.add('active-nav');
-
-                document.querySelectorAll('.active-tab').forEach(el => el.classList.remove('active-tab'));
-                document.getElementById(targetId).classList.add('active-tab');
+                switchTab(targetId, btn); // Call the new switchTab function
 
                 // User Tab Animation Trigger
                 if (targetId === 'tab-user') {
