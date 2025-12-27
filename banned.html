@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Banned - RijanTudy</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .banned-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .banned-icon {
+            font-size: 6rem;
+            color: #ef4444;
+            animation: blinkRed 1s infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes blinkRed {
+
+            0%,
+            50%,
+            100% {
+                opacity: 1;
+                color: #ef4444;
+            }
+
+            25%,
+            75% {
+                opacity: 0.3;
+                color: #dc2626;
+            }
+        }
+
+        .banned-title {
+            font-size: 2.5rem;
+            color: #ef4444;
+            margin-bottom: 15px;
+            font-weight: 700;
+            animation: blinkRed 1s infinite;
+        }
+
+        .banned-message {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-animation"></div>
+
+    <div class="banned-container">
+        <i class="fa-solid fa-ban banned-icon"></i>
+        <h1 class="banned-title">YOU BANNED BY RIJAN</h1>
+        <p class="banned-message">
+            <strong>Admin Access Denied</strong><br>
+            Your account has been permanently banned from accessing RijanTudy.
+        </p>
+        <button class="logout-btn" onclick="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD8eu916dt7z5lKH95XqNKeyinpdZ77M1I",
+            authDomain: "rijantube-13baf.firebaseapp.com",
+            databaseURL: "https://rijantube-13baf-default-rtdb.firebaseio.com",
+            projectId: "rijantube-13baf",
+            storageBucket: "rijantube-13baf.firebasestorage.app",
+            messagingSenderId: "268588154453",
+            appId: "1:268588154453:web:ce0aa25f0dd2e6a23e8f28"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        window.logout = async () => {
+            await signOut(auth);
+            window.location.href = "index.html";
+        };
+    </script>
+</body>
+
+</html>

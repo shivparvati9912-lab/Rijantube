@@ -496,6 +496,44 @@
             } else {
                 console.log("User:", user.email);
 
+                // Check user verification and ban status
+                const userRef = ref(db, 'users/' + user.uid);
+                get(userRef).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const userData = snapshot.val();
+
+                        // Check if banned
+                        if (userData.verificationStatus === 'banned') {
+                            window.location.href = "banned.html";
+                            return;
+                        }
+
+                        // Check if verification needed
+                        if (!userData.verificationStatus) {
+                            window.location.href = "verification.html";
+                            return;
+                        }
+
+                        // Check if pending or declined
+                        if (userData.verificationStatus === 'pending') {
+                            // Show pending badge
+                            console.log('Verification pending');
+                        }
+
+                        if (userData.verificationStatus === 'declined') {
+                            // Show ban warning banner
+                            showBanWarning();
+                        }
+
+                        // Load announcements for this user
+                        loadAnnouncements(user.uid);
+                    } else {
+                        // New user - redirect to verification
+                        window.location.href = "verification.html";
+                        return;
+                    }
+                });
+
                 // Populate Profile
                 const isAdmin = admins.includes(user.email);
 

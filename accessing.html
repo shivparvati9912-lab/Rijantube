@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unauthorized Access - RijanTudy</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .warning-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .warning-icon {
+            font-size: 6rem;
+            color: #f59e0b;
+            animation: blinkWarning 1s infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes blinkWarning {
+
+            0%,
+            50%,
+            100% {
+                opacity: 1;
+                color: #f59e0b;
+            }
+
+            25%,
+            75% {
+                opacity: 0.3;
+                color: #d97706;
+            }
+        }
+
+        .warning-title {
+            font-size: 2rem;
+            color: #f59e0b;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .warning-message {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 30px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-animation"></div>
+
+    <div class="warning-container">
+        <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
+        <h1 class="warning-title">⚠️ WARNING</h1>
+        <p class="warning-message">
+            <strong>You Are Trying to Admin Access</strong><br><br>
+            Risk of Account/Device Ban<br>
+            This incident has been reported to the administrator.
+        </p>
+        <button class="back-btn" onclick="goBack()">
+            <i class="fa-solid fa-arrow-left"></i> Go Back to Home
+        </button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD8eu916dt7z5lKH95XqNKeyinpdZ77M1I",
+            authDomain: "rijantube-13baf.firebaseapp.com",
+            databaseURL: "https://rijantube-13baf-default-rtdb.firebaseio.com",
+            projectId: "rijantube-13baf",
+            storageBucket: "rijantube-13baf.firebasestorage.app",
+            messagingSenderId: "268588154453",
+            appId: "1:268588154453:web:ce0aa25f0dd2e6a23e8f28"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        // Log unauthorized access attempt
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                const accessAttemptRef = ref(db, 'adminAccessAttempts');
+                push(accessAttemptRef, {
+                    userId: user.uid,
+                    userName: user.displayName || 'Anonymous',
+                    userEmail: user.email,
+                    timestamp: Date.now(),
+                    seen: false
+                });
+            }
+        });
+
+        window.goBack = () => {
+            window.location.href = "home.html";
+        };
+    </script>
+</body>
+
+</html>

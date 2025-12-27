@@ -2301,3 +2301,92 @@ td {
     padding: 30px;
     font-style: italic;
 }
+
+/* ========================================= */
+/* VERIFICATION PAGE STYLES                  */
+/* ========================================= */
+
+.verification-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.verification-header i {
+    font-size: 4rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.verification-header h1 {
+    margin: 10px 0;
+    color: var(--text-color);
+}
+
+.verification-header p {
+    color: var(--text-muted);
+}
+
+.verification-form {
+    background: var(--card-bg);
+    border: var(--glass-border);
+    border-radius: 16px;
+    padding: 30px;
+}
+
+.question-block {
+    margin-bottom: 25px;
+}
+
+.question-block label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.nepali-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.verification-note {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.required {
+    color: #ef4444;
+}
+
+/* Announcement Banner */
+.announcement-banner {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    font-weight: 500;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.announcement-banner i {
+    margin-right: 10px;
+}
