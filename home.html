@@ -209,6 +209,43 @@
                     </div>
                 </div>
             </div>
+
+            <!-- TAB: RIJANTUBE AI CHATBOT -->
+            <div id="tab-rijantube" class="tab-content">
+                <div class="chatbot-container">
+                    <div class="chatbot-header">
+                        <div class="chatbot-brand">
+                            <i class="fa-solid fa-robot"></i>
+                            <div>
+                                <h3>Rijantube AI</h3>
+                                <p class="powered-by">Powered by Rijantube</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="bot-message">
+                            <i class="fa-solid fa-robot"></i>
+                            <div class="message-content">
+                                <p>Hello! 👋 I'm Rijantube AI. I can help you with:</p>
+                                <ul>
+                                    <li>🧮 Math calculations (e.g., "calculate 25 + 30")</li>
+                                    <li>💬 General conversation</li>
+                                    <li>❓ Answering questions</li>
+                                </ul>
+                                <p>How can I help you today?</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="Ask me anything..." autocomplete="off">
+                        <button id="send-btn" class="send-btn">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </main>
 
         <!-- Bottom Navigation -->
@@ -224,6 +261,10 @@
             <button class="nav-item" data-tab="tab-user">
                 <i class="fa-solid fa-user"></i>
                 <span>User</span>
+            </button>
+            <button class="nav-item" data-tab="tab-rijantube">
+                <i class="fa-solid fa-robot"></i>
+                <span>Rijantube</span>
             </button>
         </nav>
     </div>
