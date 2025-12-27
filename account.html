@@ -57,9 +57,10 @@
                     </button>
                     <div class="panel">
                         <div class="panel-content">
-                            <div class="empty-folder">
-                                <i class="fa-solid fa-folder-open"></i>
-                                <p>No videos uploaded yet</p>
+                            <div class="file-item"
+                                onclick="openVideo('https://www.youtube.com/embed/4kgfnLpRUn8?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0')">
+                                <i class="fa-brands fa-youtube" style="color: #ef4444;"></i>
+                                <span>Journal Entry</span>
                             </div>
                         </div>
                     </div>
@@ -89,6 +90,18 @@
         </div>
     </div>
 
+    <!-- Video Modal -->
+    <div id="video-modal" class="video-modal">
+        <div class="video-modal-content">
+            <button class="video-close-btn" onclick="closeVideo()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="video-title">Journal Entry</div>
+            <iframe id="video-player" width="100%" height="100%" frameborder="0" allow="autoplay; encrypted-media"
+                allowfullscreen></iframe>
+        </div>
+    </div>
+
     <!-- Simple Accordion Script -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -108,6 +121,28 @@
                         panel.classList.add('open');
                     }
                 });
+            }
+        });
+
+        // Video Modal Functions
+        function openVideo(videoUrl) {
+            const modal = document.getElementById('video-modal');
+            const player = document.getElementById('video-player');
+            player.src = videoUrl;
+            modal.classList.add('active');
+        }
+
+        function closeVideo() {
+            const modal = document.getElementById('video-modal');
+            const player = document.getElementById('video-player');
+            player.src = '';
+            modal.classList.remove('active');
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeVideo();
             }
         });
     </script>

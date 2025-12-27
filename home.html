@@ -576,6 +576,191 @@
             }, 800);
         };
 
+
+        // --- RIJANTUBE AI CHATBOT LOGIC ---
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const chatMessages = document.getElementById('chat-messages');
+
+        // Advanced Calculator Function
+        function calculateExpression(expr) {
+            try {
+                // Clean the expression
+                expr = expr.toLowerCase()
+                    .replace(/calculate|compute|solve|what is|whats/gi, '')
+                    .replace(/[^0-9+\-*/().\s]/g, '')
+                    .trim();
+
+                // Safety check - only allow math operations
+                if (!/^[\d+\-*/().\s]+$/.test(expr)) {
+                    return null;
+                }
+
+                // Use Function constructor for safe eval (better than eval)
+                const result = Function('"use strict"; return (' + expr + ')')();
+
+                if (typeof result === 'number' && !isNaN(result)) {
+                    return result;
+                }
+                return null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // Conversational Responses Database
+        const responses = {
+            greetings: [
+                "Hello! 👋 How can I assist you today?",
+                "Hi there! 😊 What can I help you with?",
+                "Hey! Great to see you! How may I help?",
+                "Greetings! I'm here to help. What do you need?"
+            ],
+            farewell: [
+                "Goodbye! 👋 Have a great day!",
+                "See you later! Feel free to come back anytime!",
+                "Take care! Happy to help anytime you need! 😊"
+            ],
+            thanks: [
+                "You're welcome! 😊",
+                "Happy to help! Is there anything else?",
+                "No problem at all! Glad I could assist!",
+                "Anytime! That's what I'm here for! ✨"
+            ],
+            help: [
+                "I can help you with:\n• Math calculations (e.g., 'calculate 45 * 12')\n• General questions\n• Friendly conversation\nJust ask me anything!"
+            ],
+            name: [
+                "I'm Rijantube AI, your friendly assistant! 🤖",
+                "You can call me Rijantube AI! I'm here to help you.",
+                "I'm Rijantube AI, powered by advanced algorithms to assist you!"
+            ],
+            howAreYou: [
+                "I'm doing great, thanks for asking! 😊 How about you?",
+                "I'm functioning perfectly! Ready to help! How are you?",
+                "Excellent! I'm here and ready to assist. How can I help you today?"
+            ],
+            creator: [
+                "I was created by the Rijantube team to assist students like you! 🎓",
+                "The brilliant minds at Rijantube built me to help with your studies!"
+            ],
+            study: [
+                "Great question! For study resources, check out the Resources tab where you'll find materials for all subjects! 📚",
+                "I recommend exploring the Resources section - we have notes and videos for Account, English, Nepali, Economics, Computer Science, and Social Studies!"
+            ]
+        };
+
+        function getResponse(input) {
+            const lower = input.toLowerCase().trim();
+
+            // Check for calculator expressions
+            if (/(calculate|compute|solve|\d+\s*[\+\-\*\/]\s*\d+)/i.test(input)) {
+                const result = calculateExpression(input);
+                if (result !== null) {
+                    return `🧮 The answer is: **${result}**`;
+                }
+            }
+
+            // Greetings
+            if (/(^|\s)(hi|hello|hey|greetings|howdy)($|\s|!)/i.test(lower)) {
+                return responses.greetings[Math.floor(Math.random() * responses.greetings.length)];
+            }
+
+            // Farewell
+            if (/(bye|goodbye|see you|later|farewell)/i.test(lower)) {
+                return responses.farewell[Math.floor(Math.random() * responses.farewell.length)];
+            }
+
+            // Thanks
+            if (/(thank|thanks|thx|appreciate)/i.test(lower)) {
+                return responses.thanks[Math.floor(Math.random() * responses.thanks.length)];
+            }
+
+            // Help
+            if (/(help|what can you do|capabilities|assist)/i.test(lower)) {
+                return responses.help[0];
+            }
+
+            // Name
+            if (/(who are you|your name|what are you|what's your name)/i.test(lower)) {
+                return responses.name[Math.floor(Math.random() * responses.name.length)];
+            }
+
+            // How are you
+            if (/(how are you|how're you|how r u|hows it going)/i.test(lower)) {
+                return responses.howAreYou[Math.floor(Math.random() * responses.howAreYou.length)];
+            }
+
+            // Creator
+            if (/(who created you|who made you|your creator|who built you)/i.test(lower)) {
+                return responses.creator[Math.floor(Math.random() * responses.creator.length)];
+            }
+
+            // Study help
+            if (/(study|learn|subject|resource|note|video)/i.test(lower)) {
+                return responses.study[Math.floor(Math.random() * responses.study.length)];
+            }
+
+            // Default - 404 error
+            return null;
+        }
+
+        function addMessage(text, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = isUser ? 'user-message' : 'bot-message';
+
+            const icon = document.createElement('i');
+            icon.className = isUser ? 'fa-solid fa-user' : 'fa-solid fa-robot';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+
+            // Check if it's an error message
+            if (!isUser && text.includes('404')) {
+                contentDiv.classList.add('error-message-content');
+            }
+
+            // Support markdown-style bold
+            const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            contentDiv.innerHTML = `<p>${formattedText.replace(/\n/g, '<br>')}</p>`;
+
+            messageDiv.appendChild(icon);
+            messageDiv.appendChild(contentDiv);
+            chatMessages.appendChild(messageDiv);
+
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function handleSend() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, true);
+            chatInput.value = '';
+
+            // Get bot response
+            setTimeout(() => {
+                const response = getResponse(message);
+                if (response) {
+                    addMessage(response);
+                } else {
+                    addMessage("🚧 AI is Building More. Sorry 404 _ Fetch Error.\n\nI don't have a response for that yet, but I'm learning! Try asking about calculations or general questions.");
+                }
+            }, 500);
+        }
+
+        if (sendBtn && chatInput) {
+            sendBtn.addEventListener('click', handleSend);
+            chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault(); // Prevent default to avoid form submission
+                    handleSend();
+                }
+            });
+        }
+
         // Expose helpers globally if needed or use directly
         // ... (rest of existing script)
     </script>
