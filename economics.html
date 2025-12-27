@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economics - RijanTudy</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Specific page override if needed */
+        .container {
+            display: block;
+            padding-top: 60px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                padding-top: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-animation"></div>
+
+    <div class="container">
+        <div class="form-wrapper" style="max-width: 600px; margin: 0 auto;">
+            <!-- Header -->
+            <div class="subject-header">
+                <a href="home.html" class="back-btn">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div class="subject-title">
+                    <h1>Economics</h1>
+                    <p>Micro & Macro</p>
+                </div>
+            </div>
+
+            <!-- Accordion -->
+            <div class="accordion-container">
+                <!-- Video Section -->
+                <div class="accordion-item">
+                    <button class="accordion-btn">
+                        <div class="btn-content">
+                            <div class="accordion-icon" style="background: rgba(239,68,68,0.1); color: #ef4444;">
+                                <i class="fa-brands fa-youtube"></i>
+                            </div>
+                            <span>Video Resources</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                    </button>
+                    <div class="panel">
+                        <div class="panel-content">
+                            <div class="empty-folder">
+                                <i class="fa-solid fa-folder-open"></i>
+                                <p>No videos uploaded yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes Section -->
+                <div class="accordion-item">
+                    <button class="accordion-btn">
+                        <div class="btn-content">
+                            <div class="accordion-icon" style="background: rgba(16,185,129,0.1); color: #10b981;">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </div>
+                            <span>Notes & PDF</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down chevron-icon"></i>
+                    </button>
+                    <div class="panel">
+                        <div class="panel-content">
+                            <div class="empty-folder">
+                                <i class="fa-solid fa-folder-open"></i>
+                                <p>No notes available yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simple Accordion Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const acc = document.getElementsByClassName("accordion-btn");
+            for (let i = 0; i < acc.length; i++) {
+                acc[i].addEventListener("click", function () {
+                    // Close others (optional, nice for "mini opener")
+                    // remove if you want multiple open
+
+                    this.classList.toggle("active");
+                    const panel = this.nextElementSibling;
+                    if (panel.style.maxHeight) {
+                        panel.style.maxHeight = null;
+                        panel.classList.remove('open');
+                    } else {
+                        panel.style.maxHeight = panel.scrollHeight + "px";
+                        panel.classList.add('open');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
