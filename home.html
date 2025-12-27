@@ -212,37 +212,49 @@
 
             <!-- TAB: REQUEST SYSTEM -->
             <div id="tab-request" class="tab-content">
-                <div class="chatbot-container">
-                    <div class="chatbot-header">
-                        <div class="chatbot-brand">
-                            <i class="fa-solid fa-robot"></i>
-                            <div>
-                                <h3>Rijantube AI</h3>
-                                <p class="powered-by">Powered by Rijantube</p>
-                            </div>
-                        </div>
+                <div class="request-container">
+                    <div class="request-header">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <h2>Send Request to Admin</h2>
+                        <p>Your message will be sent to Rijan Dai</p>
                     </div>
 
-                    <div class="chat-messages" id="chat-messages">
-                        <div class="bot-message">
-                            <i class="fa-solid fa-robot"></i>
-                            <div class="message-content">
-                                <p>Hello! 👋 I'm Rijantube AI. I can help you with:</p>
-                                <ul>
-                                    <li>🧮 Math calculations (e.g., "calculate 25 + 30")</li>
-                                    <li>💬 General conversation</li>
-                                    <li>❓ Answering questions</li>
-                                </ul>
-                                <p>How can I help you today?</p>
+                    <form id="request-form" class="request-form">
+                        <div class="form-group">
+                            <label>To:</label>
+                            <input type="text" value="Rijan Dai" disabled class="form-input-disabled">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Your Name:</label>
+                            <input type="text" id="request-user-name" disabled class="form-input-disabled">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Message Title:</label>
+                            <input type="text" id="request-title" placeholder="Enter message title..." maxlength="100"
+                                required class="form-input">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Message:</label>
+                            <textarea id="request-message" placeholder="Type your message here..." maxlength="1000"
+                                rows="6" required class="form-textarea"></textarea>
+                            <div class="char-counter">
+                                <span id="char-count">0</span> / 1000 characters
                             </div>
                         </div>
-                    </div>
 
-                    <div class="chat-input-area">
-                        <input type="text" id="chat-input" placeholder="Ask me anything..." autocomplete="off">
-                        <button id="send-btn" class="send-btn">
-                            <i class="fa-solid fa-paper-plane"></i>
+                        <button type="submit" class="primary-btn request-submit-btn">
+                            <i class="fa-solid fa-paper-plane"></i> Send Request
                         </button>
+                    </form>
+
+                    <div class="my-requests-section">
+                        <h3><i class="fa-solid fa-list"></i> My Requests</h3>
+                        <div id="my-requests-list" class="requests-list">
+                            <p class="empty-state">No requests yet</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -546,6 +558,16 @@
                 // I'll mask profile email too to be safe/consistent with "privacy".
                 profileEmail.textContent = maskEmail(user.email);
 
+                // Populate request form
+                if (requestUserName) {
+                    requestUserName.value = user.displayName || 'Anonymous';
+                }
+
+                // Load user's requests
+                if (myRequestsList) {
+                    loadMyRequests(user.uid);
+                }
+
                 // Tag
                 if (isAdmin) {
                     profileTag.textContent = "Admin";
@@ -641,187 +663,103 @@
         };
 
 
-        // --- RIJANTUBE AI CHATBOT LOGIC ---
-        const chatInput = document.getElementById('chat-input');
-        const sendBtn = document.getElementById('send-btn');
-        const chatMessages = document.getElementById('chat-messages');
+        // --- REQUEST SYSTEM LOGIC ---
+        const requestForm = document.getElementById('request-form');
+        const requestUserName = document.getElementById('request-user-name');
+        const requestTitle = document.getElementById('request-title');
+        const requestMessage = document.getElementById('request-message');
+        const charCount = document.getElementById('char-count');
+        const myRequestsList = document.getElementById('my-requests-list');
 
-        // Advanced Calculator Function
-        function calculateExpression(expr) {
-            try {
-                // Clean the expression
-                expr = expr.toLowerCase()
-                    .replace(/calculate|compute|solve|what is|whats/gi, '')
-                    .replace(/[^0-9+\-*/().\s]/g, '')
-                    .trim();
-
-                // Safety check - only allow math operations
-                if (!/^[\d+\-*/().\s]+$/.test(expr)) {
-                    return null;
-                }
-
-                // Use Function constructor for safe eval (better than eval)
-                const result = Function('"use strict"; return (' + expr + ')')();
-
-                if (typeof result === 'number' && !isNaN(result)) {
-                    return result;
-                }
-                return null;
-            } catch (e) {
-                return null;
-            }
+        // Character counter
+        if (requestMessage) {
+            requestMessage.addEventListener('input', () => {
+                charCount.textContent = requestMessage.value.length;
+            });
         }
 
-        // Conversational Responses Database
-        const responses = {
-            greetings: [
-                "Hello! 👋 How can I assist you today?",
-                "Hi there! 😊 What can I help you with?",
-                "Hey! Great to see you! How may I help?",
-                "Greetings! I'm here to help. What do you need?"
-            ],
-            farewell: [
-                "Goodbye! 👋 Have a great day!",
-                "See you later! Feel free to come back anytime!",
-                "Take care! Happy to help anytime you need! 😊"
-            ],
-            thanks: [
-                "You're welcome! 😊",
-                "Happy to help! Is there anything else?",
-                "No problem at all! Glad I could assist!",
-                "Anytime! That's what I'm here for! ✨"
-            ],
-            help: [
-                "I can help you with:\n• Math calculations (e.g., 'calculate 45 * 12')\n• General questions\n• Friendly conversation\nJust ask me anything!"
-            ],
-            name: [
-                "I'm Rijantube AI, your friendly assistant! 🤖",
-                "You can call me Rijantube AI! I'm here to help you.",
-                "I'm Rijantube AI, powered by advanced algorithms to assist you!"
-            ],
-            howAreYou: [
-                "I'm doing great, thanks for asking! 😊 How about you?",
-                "I'm functioning perfectly! Ready to help! How are you?",
-                "Excellent! I'm here and ready to assist. How can I help you today?"
-            ],
-            creator: [
-                "I was created by the Rijantube team to assist students like you! 🎓",
-                "The brilliant minds at Rijantube built me to help with your studies!"
-            ],
-            study: [
-                "Great question! For study resources, check out the Resources tab where you'll find materials for all subjects! 📚",
-                "I recommend exploring the Resources section - we have notes and videos for Account, English, Nepali, Economics, Computer Science, and Social Studies!"
-            ]
-        };
+        // Load user requests
+        function loadMyRequests(userId) {
+            const requestsRef = ref(db, 'requests');
+            get(requestsRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const allRequests = snapshot.val();
+                    const myRequests = Object.entries(allRequests)
+                        .filter(([id, req]) => req.userId === userId)
+                        .sort((a, b) => b[1].timestamp - a[1].timestamp);
 
-        function getResponse(input) {
-            const lower = input.toLowerCase().trim();
+                    if (myRequests.length === 0) {
+                        myRequestsList.innerHTML = '<p class="empty-state">No requests yet</p>';
+                        return;
+                    }
 
-            // Check for calculator expressions
-            if (/(calculate|compute|solve|\d+\s*[\+\-\*\/]\s*\d+)/i.test(input)) {
-                const result = calculateExpression(input);
-                if (result !== null) {
-                    return `🧮 The answer is: **${result}**`;
-                }
-            }
+                    myRequestsList.innerHTML = '';
+                    myRequests.forEach(([id, request]) => {
+                        const statusClass = request.status === 'accepted' ? 'status-accepted' :
+                            request.status === 'declined' ? 'status-declined' : 'status-pending';
+                        const statusText = request.status.charAt(0).toUpperCase() + request.status.slice(1);
 
-            // Greetings
-            if (/(^|\s)(hi|hello|hey|greetings|howdy)($|\s|!)/i.test(lower)) {
-                return responses.greetings[Math.floor(Math.random() * responses.greetings.length)];
-            }
-
-            // Farewell
-            if (/(bye|goodbye|see you|later|farewell)/i.test(lower)) {
-                return responses.farewell[Math.floor(Math.random() * responses.farewell.length)];
-            }
-
-            // Thanks
-            if (/(thank|thanks|thx|appreciate)/i.test(lower)) {
-                return responses.thanks[Math.floor(Math.random() * responses.thanks.length)];
-            }
-
-            // Help
-            if (/(help|what can you do|capabilities|assist)/i.test(lower)) {
-                return responses.help[0];
-            }
-
-            // Name
-            if (/(who are you|your name|what are you|what's your name)/i.test(lower)) {
-                return responses.name[Math.floor(Math.random() * responses.name.length)];
-            }
-
-            // How are you
-            if (/(how are you|how're you|how r u|hows it going)/i.test(lower)) {
-                return responses.howAreYou[Math.floor(Math.random() * responses.howAreYou.length)];
-            }
-
-            // Creator
-            if (/(who created you|who made you|your creator|who built you)/i.test(lower)) {
-                return responses.creator[Math.floor(Math.random() * responses.creator.length)];
-            }
-
-            // Study help
-            if (/(study|learn|subject|resource|note|video)/i.test(lower)) {
-                return responses.study[Math.floor(Math.random() * responses.study.length)];
-            }
-
-            // Default - 404 error
-            return null;
-        }
-
-        function addMessage(text, isUser = false) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = isUser ? 'user-message' : 'bot-message';
-
-            const icon = document.createElement('i');
-            icon.className = isUser ? 'fa-solid fa-user' : 'fa-solid fa-robot';
-
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'message-content';
-
-            // Check if it's an error message
-            if (!isUser && text.includes('404')) {
-                contentDiv.classList.add('error-message-content');
-            }
-
-            // Support markdown-style bold
-            const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            contentDiv.innerHTML = `<p>${formattedText.replace(/\n/g, '<br>')}</p>`;
-
-            messageDiv.appendChild(icon);
-            messageDiv.appendChild(contentDiv);
-            chatMessages.appendChild(messageDiv);
-
-            // Scroll to bottom
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function handleSend() {
-            const message = chatInput.value.trim();
-            if (!message) return;
-
-            // Add user message
-            addMessage(message, true);
-            chatInput.value = '';
-
-            // Get bot response
-            setTimeout(() => {
-                const response = getResponse(message);
-                if (response) {
-                    addMessage(response);
+                        const requestCard = document.createElement('div');
+                        requestCard.className = 'request-card';
+                        requestCard.innerHTML = `
+                            <div class="request-card-header">
+                                <strong>${request.title}</strong>
+                                <span class="status-badge ${statusClass}">${statusText}</span>
+                            </div>
+                            <p class="request-message-preview">${request.message.substring(0, 100)}${request.message.length > 100 ? '...' : ''}</p>
+                            <small class="request-date">${new Date(request.timestamp).toLocaleString()}</small>
+                        `;
+                        myRequestsList.appendChild(requestCard);
+                    });
                 } else {
-                    addMessage("🚧 AI is Building More. Sorry 404 _ Fetch Error.\n\nI don't have a response for that yet, but I'm learning! Try asking about calculations or general questions.");
+                    myRequestsList.innerHTML = '<p class="empty-state">No requests yet</p>';
                 }
-            }, 500);
+            });
         }
 
-        if (sendBtn && chatInput) {
-            sendBtn.addEventListener('click', handleSend);
-            chatInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault(); // Prevent default to avoid form submission
-                    handleSend();
+        // Submit request  
+        if (requestForm) {
+            requestForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const user = auth.currentUser;
+                if (!user) {
+                    showToast('Please login first', 'fa-exclamation-circle');
+                    return;
                 }
+
+                const title = requestTitle.value.trim();
+                const message = requestMessage.value.trim();
+
+                if (!title || !message) {
+                    showToast('Please fill in all fields', 'fa-exclamation-circle');
+                    return;
+                }
+
+                // Generate request ID
+                const requestId = Date.now().toString();
+                const requestData = {
+                    userId: user.uid,
+                    userName: user.displayName || 'Anonymous',
+                    userEmail: user.email,
+                    title: title,
+                    message: message,
+                    timestamp: Date.now(),
+                    status: 'pending'
+                };
+
+                // Save to Firebase
+                const requestRef = ref(db, 'requests/' + requestId);
+                set(requestRef, requestData).then(() => {
+                    showToast('Request sent successfully!', 'fa-check-circle');
+                    requestTitle.value = '';
+                    requestMessage.value = '';
+                    charCount.textContent = '0';
+                    loadMyRequests(user.uid);
+                }).catch((error) => {
+                    showToast('Failed to send request', 'fa-exclamation-circle');
+                    console.error(error);
+                });
             });
         }
 
