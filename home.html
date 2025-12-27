@@ -493,6 +493,7 @@
         onAuthStateChanged(auth, (user) => {
             if (!user) {
                 window.location.href = "index.html";
+                return;
             } else {
                 console.log("User:", user.email);
 
@@ -508,30 +509,19 @@
                             return;
                         }
 
-                        // Check if verification needed
-                        if (!userData.verificationStatus) {
-                            window.location.href = "verification.html";
-                            return;
-                        }
-
-                        // Check if pending or declined
-                        if (userData.verificationStatus === 'pending') {
-                            // Show pending badge
-                            console.log('Verification pending');
-                        }
-
+                        // Check if declined - show warning but allow access
                         if (userData.verificationStatus === 'declined') {
-                            // Show ban warning banner
                             showBanWarning();
                         }
 
                         // Load announcements for this user
                         loadAnnouncements(user.uid);
-                    } else {
-                        // New user - redirect to verification
-                        window.location.href = "verification.html";
-                        return;
                     }
+                    // If no user data exists, user can still access (backward compatibility)
+                    // Verification can be made mandatory later
+                }).catch((error) => {
+                    console.error("Error checking verification:", error);
+                    // Continue loading on error to prevent blocking
                 });
 
                 // Populate Profile
