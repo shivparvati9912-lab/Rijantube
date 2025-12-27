@@ -1,0 +1,151 @@
+<!-- REQUEST TAB HTML (Replace entire tab-rijantube div content) -->
+<div id="tab-request" class="tab-content">
+    <div class="request-container">
+        <div class="request-header">
+            <i class="fa-solid fa-paper-plane"></i>
+            <h2>Send Request to Admin</h2>
+            <p>Your message will be sent to Rijan Dai</p>
+        </div>
+
+        <form id="request-form" class="request-form">
+            <div class="form-group">
+                <label>To:</label>
+                <input type="text" value="Rijan Dai" disabled class="form-input-disabled">
+            </div>
+
+            <div class="form-group">
+                <label>Your Name:</label>
+                <input type="text" id="request-user-name" disabled class="form-input-disabled">
+            </div>
+
+            <div class="form-group">
+                <label>Message Title:</label>
+                <input type="text" id="request-title" placeholder="Enter message title..." maxlength="100" required
+                    class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label>Message:</label>
+                <textarea id="request-message" placeholder="Type your message here..." maxlength="1000" rows="6"
+                    required class="form-textarea"></textarea>
+                <div class="char-counter">
+                    <span id="char-count">0</span> / 1000 characters
+                </div>
+            </div>
+
+            <button type="submit" class="primary-btn request-submit-btn">
+                <i class="fa-solid fa-paper-plane"></i> Send Request
+            </button>
+        </form>
+
+        <div class="my-requests-section">
+            <h3><i class="fa-solid fa-list"></i> My Requests</h3>
+            <div id="my-requests-list" class="requests-list">
+                <p class="empty-state">No requests yet</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- REQUEST JAVASCRIPT (Replace chatbot logic section) -->
+<script>
+    // --- REQUEST SYSTEM LOGIC ---
+    const requestForm = document.getElementById('request-form');
+    const requestUserName = document.getElementById('request-user-name');
+    const requestTitle = document.getElementById('request-title');
+    const requestMessage = document.getElementById('request-message');
+    const charCount = document.getElementById('char-count');
+    const myRequestsList = document.getElementById('my-requests-list');
+
+    // Character counter
+    if (requestMessage) {
+        requestMessage.addEventListener('input', () => {
+            charCount.textContent = requestMessage.value.length;
+        });
+    }
+
+    // Load user requests
+    function loadMyRequests(userId) {
+        const requestsRef = ref(db, 'requests');
+        get(requestsRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const allRequests = snapshot.val();
+                const myRequests = Object.entries(allRequests)
+                    .filter(([id, req]) => req.userId === userId)
+                    .sort((a, b) => b[1].timestamp - a[1].timestamp);
+
+                if (myRequests.length === 0) {
+                    myRequestsList.innerHTML = '<p class="empty-state">No requests yet</p>';
+                    return;
+                }
+
+                myRequestsList.innerHTML = '';
+                myRequests.forEach(([id, request]) => {
+                    const statusClass = request.status === 'accepted' ? 'status-accepted' :
+                        request.status === 'declined' ? 'status-declined' : 'status-pending';
+                    const statusText = request.status.charAt(0).toUpperCase() + request.status.slice(1);
+
+                    const requestCard = document.createElement('div');
+                    requestCard.className = 'request-card';
+                    requestCard.innerHTML = `
+                    <div class="request-card-header">
+                        <strong>${request.title}</strong>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                    <p class="request-message-preview">${request.message.substring(0, 100)}${request.message.length > 100 ? '...' : ''}</p>
+                    <small class="request-date">${new Date(request.timestamp).toLocaleString()}</small>
+                `;
+                    myRequestsList.appendChild(requestCard);
+                });
+            } else {
+                myRequestsList.innerHTML = '<p class="empty-state">No requests yet</p>';
+            }
+        });
+    }
+
+    // Submit request  
+    if (requestForm) {
+        requestForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const user = auth.currentUser;
+            if (!user) {
+                showToast('Please login first', 'fa-exclamation-circle');
+                return;
+            }
+
+            const title = requestTitle.value.trim();
+            const message = requestMessage.value.trim();
+
+            if (!title || !message) {
+                showToast('Please fill in all fields', 'fa-exclamation-circle');
+                return;
+            }
+
+            // Generate request ID
+            const requestId = Date.now().toString();
+            const requestData = {
+                userId: user.uid,
+                userName: user.displayName || 'Anonymous',
+                userEmail: user.email,
+                title: title,
+                message: message,
+                timestamp: Date.now(),
+                status: 'pending'
+            };
+
+            // Save to Firebase
+            const requestRef = ref(db, 'requests/' + requestId);
+            set(requestRef, requestData).then(() => {
+                showToast('Request sent successfully!', 'fa-check-circle');
+                requestTitle.value = '';
+                requestMessage.value = '';
+                charCount.textContent = '0';
+                loadMyRequests(user.uid);
+            }).catch((error) => {
+                showToast('Failed to send request', 'fa-exclamation-circle');
+                console.error(error);
+            });
+        });
+    }
+</script>
