@@ -601,6 +601,42 @@
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
+        };
+
+        // --- BAN WARNING AND ANNOUNCEMENTS ---
+        function showBanWarning() {
+            const container = document.getElementById('announcement-container');
+            const banner = document.createElement('div');
+            banner.className = 'announcement-banner';
+            banner.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> ⚠️ Your account Ban under 2 Days. Go to Message tab for Help to Admins.';
+            container.appendChild(banner);
+        }
+
+        function loadAnnouncements(userId) {
+            const announcementsRef = ref(db, 'announcements');
+            get(announcementsRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const announcements = snapshot.val();
+                    const container = document.getElementById('announcement-container');
+
+                    Object.entries(announcements).forEach(([id, announcement]) => {
+                        // Check if announcement is for this user or all users
+                        const isForMe = announcement.targetUsers === 'all' ||
+                            (announcement.targetUsers && announcement.targetUsers.includes(userId));
+
+                        // Check if still valid (within duration)
+                        const isValid = !announcement.expiresAt || Date.now() < announcement.expiresAt;
+
+                        if (isForMe && isValid) {
+                            const banner = document.createElement('div');
+                            banner.className = 'announcement-banner';
+                            banner.style.background = 'linear-gradient(135deg, #6366f1, #8b5cf6)';
+                            banner.innerHTML = `<i class="fa-solid fa-bullhorn"></i> ${announcement.message}`;
+                            container.appendChild(banner);
+                        }
+                    });
+                }
+            });
         }
 
         // --- NAVIGATION HELPER ---
