@@ -79,9 +79,26 @@
         </header>
 
         <main class="home-main">
-            <!-- TAB: HOME -->
-            <!-- TAB: HOME / RESOURCES -->
+            <!-- TAB: HOME (Welcome) -->
             <div id="tab-home" class="tab-content active">
+                <div class="welcome-section">
+                    <h2>Welcome <span id="user-name-display">Student</span>!</h2>
+                    <div class="welcome-card">
+                        <i class="fa-solid fa-graduation-cap"
+                            style="font-size: 3rem; color: var(--primary-color); margin-bottom: 15px;"></i>
+                        <h3>Ready to Learn?</h3>
+                        <p>Explore your study resources and start your learning journey.</p>
+                        <button class="primary-btn"
+                            onclick="switchTab('tab-resource', document.querySelector('[data-tab=tab-resource]'))">
+                            <i class="fa-solid fa-book"></i> Browse Resources
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: RESOURCES (Subject Widgets) -->
+            <div id="tab-resource" class="tab-content">
+                <h2>Study Resources</h2>
                 <div class="resources-grid">
                     <!-- Account Widget -->
                     <div class="subject-widget" onclick="navigateTo('account.html', 'Account')">
@@ -250,23 +267,23 @@
             </div>
         </main>
 
-        <!-- Bottom Navigation -->
+        <!-- Bottom Nav -->
         <nav class="bottom-nav">
             <button class="nav-item active-nav" data-tab="tab-home">
                 <i class="fa-solid fa-house"></i>
                 <span>Home</span>
             </button>
             <button class="nav-item" data-tab="tab-resource">
-                <i class="fa-solid fa-folder-open"></i>
+                <i class="fa-solid fa-book"></i>
                 <span>Resources</span>
-            </button>
-            <button class="nav-item" data-tab="tab-user">
-                <i class="fa-solid fa-user"></i>
-                <span>User</span>
             </button>
             <button class="nav-item" data-tab="tab-request">
                 <i class="fa-solid fa-envelope"></i>
                 <span>Request</span>
+            </button>
+            <button class="nav-item" data-tab="tab-user">
+                <i class="fa-solid fa-user"></i>
+                <span>User</span>
             </button>
         </nav>
     </div>
@@ -559,17 +576,23 @@
                 profileName.textContent = user.displayName || "No Name";
                 profilePic.src = user.photoURL || "https://via.placeholder.com/100";
 
-                // Email Masking for Profile View
-                // User said: "hide 60% of email name part... for admin in user tab admin tag"
-                // If I am Admin, do I see full email? Prompt says "show Rijanjoshi66@gmail.com on top... hide 60%".
-                // Usually profile shows MY full email. But prompt is specific.
-                // "All access from a google account ... show Age,Name,number,etc"
-                // "show top right cornor leaderboard Icon on click Show list of all Memebrs ... and dont show full email hide 60% ... show for admin in user tab admin tag"
+                const headerName = document.getElementById('user-name');
+                const shortName = user.displayName ? user.displayName.split(' ')[0] : 'Student';
+                headerName.textContent = shortName;
 
-                // Interpretation: Profile shows masked email too? Or just leaderboard? 
-                // "In user tab show here All access ... and show for admin in user tab admin tag".
-                // I'll mask profile email too to be safe/consistent with "privacy".
-                profileEmail.textContent = maskEmail(user.email);
+                // Profile Name & Picture
+                profileName.textContent = user.displayName || 'Student';
+                profilePic.src = user.photoURL || 'https://via.placeholder.com/100';
+
+                // Profile Email (masked)
+                const maskedEmail = maskEmail(user.email);
+                profileEmail.textContent = maskedEmail;
+
+                // Welcome display name
+                const welcomeNameDisplay = document.getElementById('user-name-display');
+                if (welcomeNameDisplay) {
+                    welcomeNameDisplay.textContent = user.displayName || 'Student';
+                }
 
                 // Populate request form
                 if (requestUserName) {

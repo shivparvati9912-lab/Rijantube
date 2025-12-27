@@ -569,6 +569,36 @@ h2 {
     opacity: 1;
 }
 
+/* Welcome Section */
+.welcome-section {
+    text-align: center;
+    max-width: 600px;
+    margin: 40px auto;
+}
+
+.welcome-section h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+.welcome-card {
+    background: var(--card-bg);
+    border: var(--glass-border);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+}
+
+.welcome-card h3 {
+    font-size: 1.5rem;
+    margin: 15px 0;
+}
+
+.welcome-card p {
+    color: var(--text-muted);
+    margin-bottom: 25px;
+}
+
 /* Construction Placeholder */
 .construction-container {
     display: flex;
