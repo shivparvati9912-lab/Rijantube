@@ -115,56 +115,90 @@
                 </div>
             </div>
 
-            <!-- User Detail Modal -->
-            <div id="user-modal" class="leaderboard-modal">
-                <div class="leaderboard-content" style="max-width: 500px;">
-                    <div class="leaderboard-header">
-                        <h2>User Details</h2>
-                        <button id="close-modal" class="close-btn">&times;</button>
-                    </div>
-                    <div class="user-detail-view">
-                        <div class="profile-header">
-                            <img id="detail-pic" src="" alt="Profile" class="profile-pic">
-                            <h2 id="detail-name">Name</h2>
-                            <span id="detail-status" class="role-tag">Active</span>
-                        </div>
-                        <div class="profile-details">
-                            <div class="detail-item">
-                                <i class="fa-solid fa-envelope"></i>
-                                <div>
-                                    <label>Email</label>
-                                    <p id="detail-email">...</p>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fa-solid fa-network-wired"></i>
-                                <div>
-                                    <label>IP Address</label>
-                                    <p id="detail-ip">...</p>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fa-solid fa-clock"></i>
-                                <div>
-                                    <label>Last Online</label>
-                                    <p id="detail-last-seen">...</p>
-                                </div>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fa-solid fa-star"></i>
-                                <div>
-                                    <label>XP</label>
-                                    <p id="detail-xp">...</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button id="ban-action-btn" class="primary-btn"
-                            style="width: 100%; margin-top: 20px; background: #ef4444;">Ban User</button>
-                    </div>
-                </div>
+            <!-- Users Tab -->
+            <div id="users" class="admin-tab-content">
+                <header class="admin-header">
+                    <h2>User Management</h2>
+                </header>
+                <p>User management content will go here...</p>
             </div>
 
-            <script type="module" src="admin.js"></script>
+            <!-- Resources Tab -->
+            <div id="resources" class="admin-tab-content">
+                <header class="admin-header">
+                    <h2>Resource Management</h2>
+                </header>
+                <p>Resource management content will go here...</p>
+            </div>
+
+            <!-- Announcements Tab -->
+            <div id="announcements" class="admin-tab-content">
+                <header class="admin-header">
+                    <h2>Announcements</h2>
+                </header>
+                <p>Announcement management content will go here...</p>
+            </div>
+
+            <!-- Notifications Tab -->
+            <div id="notifications" class="admin-tab-content">
+                <header class="admin-header">
+                    <h2>Notifications</h2>
+                </header>
+                <p>Admin access attempts and notifications will go here...</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- User Detail Modal -->
+    <div id="user-modal" class="leaderboard-modal">
+        <div class="leaderboard-content" style="max-width: 500px;">
+            <div class="leaderboard-header">
+                <h2>User Details</h2>
+                <button id="close-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="user-detail-view">
+                <div class="profile-header">
+                    <img id="detail-pic" src="" alt="Profile" class="profile-pic">
+                    <h2 id="detail-name">Name</h2>
+                    <span id="detail-status" class="role-tag">Active</span>
+                </div>
+                <div class="profile-details">
+                    <div class="detail-item">
+                        <i class="fa-solid fa-envelope"></i>
+                        <div>
+                            <label>Email</label>
+                            <p id="detail-email">...</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fa-solid fa-network-wired"></i>
+                        <div>
+                            <label>IP Address</label>
+                            <p id="detail-ip">...</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fa-solid fa-clock"></i>
+                        <div>
+                            <label>Last Online</label>
+                            <p id="detail-last-seen">...</p>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fa-solid fa-star"></i>
+                        <div>
+                            <label>XP</label>
+                            <p id="detail-xp">...</p>
+                        </div>
+                    </div>
+                </div>
+                <button id="ban-action-btn" class="primary-btn"
+                    style="width: 100%; margin-top: 20px; background: #ef4444;">Ban User</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
 </body>
 
 </html>

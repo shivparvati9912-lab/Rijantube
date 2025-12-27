@@ -18,6 +18,24 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
+// Tab Navigation
+const navTabs = document.querySelectorAll('.nav-tab');
+const tabContents = document.querySelectorAll('.admin-tab-content');
+
+navTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        const targetTab = tab.dataset.tab;
+
+        // Remove active class from all tabs and contents
+        navTabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+
+        // Add active class to clicked tab and corresponding content
+        tab.classList.add('active');
+        document.getElementById(targetTab).classList.add('active');
+    });
+});
+
 // Admitted Admins (Should ideally be server-side or via Custom Claims)
 const admins = ["rijanjoshi66@gmail.com", "shivparvati9912@gmail.com"];
 
